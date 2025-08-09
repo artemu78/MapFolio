@@ -153,7 +153,7 @@ function TechLabel({ tech, config, zoom }: {
 }
 
 export function FallbackTechMap({ technologies }: TechMapProps) {
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setZoom] = useState(0.8); // Start zoomed out to show more of the map
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -164,7 +164,7 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
-      setZoom(prev => Math.max(0.5, Math.min(3, prev * zoomDelta)));
+      setZoom(prev => Math.max(0.2, Math.min(4, prev * zoomDelta))); // Allow zoom from 20% to 400%
     };
 
     const container = document.getElementById('tech-map-container');
@@ -246,6 +246,12 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
 
   const handleTouchEnd = () => {
     setIsDragging(false);
+  };
+
+  // Reset to default view
+  const resetView = () => {
+    setZoom(0.8);
+    setPanOffset({ x: 0, y: 0 });
   };
 
   return (
@@ -339,12 +345,19 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
         <div className="font-semibold mb-2 text-cyan-400">Mystical Tech Dimension</div>
         <div className="text-xs opacity-80 space-y-1">
           <div>Mode: Landscape Explorer</div>
-          <div>Zoom: {(zoom * 100).toFixed(0)}%</div>
+          <div>Zoom: {(zoom * 100).toFixed(0)}% (20%-400%)</div>
           <div>Pan: ({panOffset.x.toFixed(0)}, {panOffset.y.toFixed(0)})</div>
           <div><span data-testid="tech-count">{technologies.length}</span> Technologies Mapped</div>
           {selectedZone && <div className="text-yellow-400">Zone: {selectedZone}</div>}
           {isDragging && <div className="text-green-400">⭐ Panning Active</div>}
         </div>
+        <button
+          onClick={resetView}
+          className="mt-3 px-3 py-1 bg-cyan-600/20 border border-cyan-500/50 rounded-md text-xs text-cyan-300 hover:bg-cyan-600/30 transition-colors"
+          data-testid="reset-view-button"
+        >
+          Reset View
+        </button>
       </div>
       
       {/* Zone Legend */}
