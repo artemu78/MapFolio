@@ -1,0 +1,108 @@
+Project Goal:
+Create a single-page, full-screen, interactive 3D portfolio map using React. The application will visualize my technology skills as glowing 3D text labels in a dark, mystical 3D space. The map must be pannable and zoomable.
+
+Core Framework:
+React
+
+Key Features & Requirements:
+
+Fullscreen 3D Canvas:
+
+The application should feature a single react-three-fiber <Canvas> that takes up the entire browser viewport (100% width and height).
+
+The background of the 3D space should be a solid, very dark, deep blue, like the void of space. Use the hex code #050217.
+
+3D Technology Labels:
+
+The primary elements on the map are 3D text labels representing different technologies.
+
+Use the Text3D component from @react-three/drei.
+
+The font should be a clean, sans-serif, sci-fi style font (e.g., Orbitron or a similar typeface). Assume you have access to the required JSON format for the font.
+
+Each label should have a unique color and an emissive glow to make it stand out against the dark background.
+
+Interactive Map Controls:
+
+Implement map controls using @react-three/drei.
+
+The user must be able to pan the map by clicking and dragging the mouse.
+
+The user must be able to zoom in and out using the mouse wheel.
+
+Disable rotation. The map view should remain flat, facing the user.
+
+Set a minimum zoom distance of 5 and a maximum zoom distance of 30 to prevent the user from getting lost.
+
+Lighting:
+
+Set up lighting to make the 3D text clear and vibrant.
+
+Include a soft ambientLight with an intensity of 0.5.
+
+Add a pointLight to create highlights and a sense of depth.
+
+Component Architecture & Data:
+
+Main Component (TechMap.js):
+
+Encapsulate all the 3D logic into a reusable React component named TechMap.
+
+This component must accept one prop: technologies, which is an array of strings (e.g., ['React', 'AWS']).
+
+The component will dynamically render only the 3D labels for the technologies passed in this array.
+
+Technology Configuration Data:
+
+Inside the TechMap component, use the following hardcoded JavaScript object to define the properties for each possible technology. The component will use this object to look up the color and 3D position for each label it needs to render.
+
+JavaScript
+
+const techConfig = {
+  'TypeScript': { color: '#3178c6', position: [-4, 4, 0] },
+  'JavaScript': { color: '#f7df1e', position: [-5, 0, 0] },
+  'AWS': { color: '#FF9900', position: [5, 3, -2] },
+  'React Router': { color: '#CA4245', position: [0, -3, 0] },
+  'Zustand': { color: '#9a7f39', position: [-2, -5, 1] },
+  'Firebase': { color: '#FFCA28', position: [4, -2, -1] },
+  'Material UI': { color: '#0081CB', position: [6, 0, 0] },
+  'Chrome Extensions': { color: '#e0e0e0', position: [0, 5, 2] }
+};
+Example Usage (App.js):
+
+Generate a root App.js file that demonstrates how to use the TechMap component.
+
+JavaScript
+
+import React from 'react';
+import { TechMap } from './TechMap'; // Assuming TechMap is in a local file
+
+// An example array of technologies for a project.
+const projectTechStack = [
+    'TypeScript',
+    'AWS',
+    'Firebase',
+    'React Router',
+    'Zustand'
+];
+
+function App() {
+    return (
+        <div style={{ width: '100vw', height: '100vh', margin: 0, padding: 0 }}>
+            <TechMap technologies={projectTechStack} />
+        </div>
+    );
+}
+
+export default App;
+Dependencies to Install:
+
+react
+
+react-dom
+
+three
+
+@react-three/fiber
+
+@react-three/drei
