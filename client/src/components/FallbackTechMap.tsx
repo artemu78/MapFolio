@@ -174,9 +174,12 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
 
   // Handle mouse drag for pan
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
+    // Allow panning from any point on the map, except tech labels
+    const target = e.target as HTMLElement;
+    if (!target.closest('[data-testid^="tech-label"]')) {
       setIsDragging(true);
       setDragStart({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+      e.preventDefault();
     }
   };
 
@@ -186,6 +189,7 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
         x: e.clientX - dragStart.x,
         y: e.clientY - dragStart.y
       });
+      e.preventDefault();
     }
   };
 
@@ -193,15 +197,71 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
     setIsDragging(false);
   };
 
+  // Also handle global mouse events for better dragging experience
+  useEffect(() => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
+      if (isDragging) {
+        setPanOffset({
+          x: e.clientX - dragStart.x,
+          y: e.clientY - dragStart.y
+        });
+      }
+    };
+
+    const handleGlobalMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    if (isDragging) {
+      document.addEventListener('mousemove', handleGlobalMouseMove);
+      document.addEventListener('mouseup', handleGlobalMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove);
+      document.removeEventListener('mouseup', handleGlobalMouseUp);
+    };
+  }, [isDragging, dragStart]);
+
+  // Touch support for mobile devices
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      setIsDragging(true);
+      setDragStart({ x: touch.clientX - panOffset.x, y: touch.clientY - panOffset.y });
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (isDragging && e.touches.length === 1) {
+      const touch = e.touches[0];
+      setPanOffset({
+        x: touch.clientX - dragStart.x,
+        y: touch.clientY - dragStart.y
+      });
+      e.preventDefault();
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
     <div 
       id="tech-map-container"
-      className="w-screen h-screen relative overflow-hidden select-none cursor-grab active:cursor-grabbing"
+      className={`w-screen h-screen relative overflow-hidden select-none ${
+        isDragging ? 'cursor-grabbing' : 'cursor-grab'
+      }`}
       style={{ background: '#050217' }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
       data-testid="tech-map-container"
     >
       {/* Mystical Landscape Gradients */}
@@ -280,8 +340,10 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
         <div className="text-xs opacity-80 space-y-1">
           <div>Mode: Landscape Explorer</div>
           <div>Zoom: {(zoom * 100).toFixed(0)}%</div>
+          <div>Pan: ({panOffset.x.toFixed(0)}, {panOffset.y.toFixed(0)})</div>
           <div><span data-testid="tech-count">{technologies.length}</span> Technologies Mapped</div>
           {selectedZone && <div className="text-yellow-400">Zone: {selectedZone}</div>}
+          {isDragging && <div className="text-green-400">⭐ Panning Active</div>}
         </div>
       </div>
       
