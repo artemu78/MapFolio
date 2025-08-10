@@ -348,8 +348,16 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
           <div>Zoom: {(zoom * 100).toFixed(0)}% (20%-400%)</div>
           <div>Pan: ({panOffset.x.toFixed(0)}, {panOffset.y.toFixed(0)})</div>
           <div><span data-testid="tech-count">{technologies.length}</span> Technologies Mapped</div>
-          {selectedZone && <div className="text-yellow-400">Zone: {selectedZone}</div>}
-          {isDragging && <div className="text-green-400">⭐ Panning Active</div>}
+          <div className="h-4">
+            {selectedZone && <div className="text-yellow-400">Zone: {selectedZone}</div>}
+          </div>
+          <div className="h-4">
+            {isDragging ? (
+              <div className="text-green-400">⭐ Panning Active</div>
+            ) : (
+              <div className="text-gray-500">Click & drag to pan</div>
+            )}
+          </div>
         </div>
         <button
           onClick={resetView}
