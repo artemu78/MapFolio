@@ -153,7 +153,7 @@ function TechLabel({ tech, config, zoom }: {
 }
 
 export function FallbackTechMap({ technologies }: TechMapProps) {
-  const [zoom, setZoom] = useState(0.8); // Start zoomed out to show more of the map
+  const [zoom, setZoom] = useState(1); // Start at 100% zoom
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -164,7 +164,7 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
       const zoomDelta = e.deltaY > 0 ? 0.9 : 1.1;
-      setZoom(prev => Math.max(0.2, Math.min(4, prev * zoomDelta))); // Allow zoom from 20% to 400%
+      setZoom(prev => Math.max(1, Math.min(4, prev * zoomDelta))); // Allow zoom from 100% to 400%
     };
 
     const container = document.getElementById('tech-map-container');
@@ -250,7 +250,7 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
 
   // Reset to default view
   const resetView = () => {
-    setZoom(0.8);
+    setZoom(1);
     setPanOffset({ x: 0, y: 0 });
   };
 
@@ -345,7 +345,7 @@ export function FallbackTechMap({ technologies }: TechMapProps) {
         <div className="font-semibold mb-2 text-cyan-400">Mystical Tech Dimension</div>
         <div className="text-xs opacity-80 space-y-1">
           <div>Mode: Landscape Explorer</div>
-          <div>Zoom: {(zoom * 100).toFixed(0)}% (20%-400%)</div>
+          <div>Zoom: {(zoom * 100).toFixed(0)}% (100%-400%)</div>
           <div>Pan: ({panOffset.x.toFixed(0)}, {panOffset.y.toFixed(0)})</div>
           <div><span data-testid="tech-count">{technologies.length}</span> Technologies Mapped</div>
           <div className="h-4">
